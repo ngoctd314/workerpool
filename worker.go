@@ -18,13 +18,13 @@ func (w worker) start() {
 	handle := func() {
 		for {
 			// send job address to pool
-			// if pool buffer is full => block
+			// if pool buffer is full => worker block
 			w.pool <- w.jobChannel
 
 			select {
 			case job := <-w.jobChannel:
 				// worker receive new job, run it
-				err := job.Exec()
+				err := job.ExecJob()
 				// if error happen, store job to file
 				if err != nil {
 					// store to file

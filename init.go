@@ -35,19 +35,18 @@ func Init(config Config) {
 		newWorker(workerPool).start()
 	}
 
-	jobAssign := func() {
+	// run job assign by fork new goroutine
+	go func() {
 		for {
 			select {
 			// receive job from job queue
 			case job := <-jobQueue:
-				// get worker
+				// get worker from pool
 				worker := <-workerPool
 				// assign job for worker
 				worker <- job
 			}
 		}
-	}
+	}()
 
-	// run job assign by fork new goroutine
-	go jobAssign()
 }
